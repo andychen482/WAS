@@ -394,7 +394,9 @@ const Map = () => {
             .setText(coord.name)
             .setHTML(coord.name.replace(/\n/g, "<br/>")); // Replace newline characters with HTML line breaks
 
-          new mapboxgl.Marker(el)
+          new mapboxgl.Marker(el, {
+            offset: [-4, -15],
+          })
             .setLngLat([coord.location.longitude, coord.location.latitude])
             .setPopup(popup)
             .addTo(map!);

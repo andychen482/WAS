@@ -15,12 +15,6 @@
   pointer-events: none !important;
 }
 
-.marker.mapboxgl-marker {
-  position: absolute;
-  top: -2%;
-  left: -1%;
-}
-
 .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
   display: none !important;
 }
