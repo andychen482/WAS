@@ -43,7 +43,7 @@ const CourseSearch: React.FC<CourseSearchProps> = ({
     }
     debounceRef.current = setTimeout(() => {
       setDebouncedSearchTerm(formattedInput);
-      if (formattedInput !== "" && formattedInput.length > 2) {
+      if (formattedInput !== "" && formattedInput.length == 8) {
         handleSearchMetrics(formattedInput);
       }
     }, 200); // 300ms delay

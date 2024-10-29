@@ -111,16 +111,21 @@ const Main = () => {
     setIsChatVisible((prevIsChatVisible) => {
       if (!prevIsChatVisible) {
         setHasNewMessage(true);
+        localStorage.setItem("hasNewMessage", "true");
       } else {
         setHasNewMessage(false);
+        localStorage.setItem("hasNewMessage", "false");
       }
       return prevIsChatVisible;
     });
-    localStorage.setItem("hasNewMessage", "true");
   };
 
   const handleOpenChat = () => {
     setIsChatVisible(true);
+    setHasNewMessage(false);
+    localStorage.setItem("hasNewMessage", "false");
+    const now = new Date().toISOString();
+    localStorage.setItem("lastReadTimestamp", now);
   };
 
   const handleActiveUsersUpdate = (count: number) => {

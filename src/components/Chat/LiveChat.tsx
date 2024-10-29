@@ -101,6 +101,8 @@ const Chat: React.FC<ChatProps> = ({
     if (newMessages.length > 0) {
       setHasNewMessage(true);
       localStorage.setItem("hasNewMessage", "true");
+      const now = new Date().toISOString();
+      localStorage.setItem("lastReadTimestamp", now);
     }
   };
 
@@ -226,10 +228,6 @@ const Chat: React.FC<ChatProps> = ({
   const handleToggleChat = () => {
     setIsChatVisible(false);
     localStorage.setItem("hasClosedChat", "true");
-    const now = new Date().toISOString();
-    localStorage.setItem("lastReadTimestamp", now);
-    setHasNewMessage(false);
-    localStorage.setItem("hasNewMessage", "false");
   };
 
   useEffect(() => {
