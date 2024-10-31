@@ -94,19 +94,20 @@ const Chat: React.FC<ChatProps> = ({
       } else {
         const { messages: newMessages, lastEvaluatedKey: newKey } = data;
         
-        if (chatMessagesRef.current) {
-          const lastMessage = document.getElementById(`message-0`);
-          if (lastMessage) {
-            scrollPositionRef.current = lastMessage.offsetTop;
-          }
-        }
-
+        // Store the current scroll height before adding new messages
+        const prevScrollHeight = chatMessagesRef.current?.scrollHeight || 0;
+        
         setMessages((prevMessages) => [...newMessages, ...prevMessages]);
         setLastEvaluatedKey(newKey);
         
-        if (chatMessagesRef.current) {
-          chatMessagesRef.current.scrollTop = scrollPositionRef.current - 47;
-        }
+        // After the messages are updated, adjust scroll position
+        setTimeout(() => {
+          if (chatMessagesRef.current) {
+            const newScrollHeight = chatMessagesRef.current.scrollHeight;
+            const heightDifference = newScrollHeight - prevScrollHeight;
+            chatMessagesRef.current.scrollTop = heightDifference;
+          }
+        }, 0);
       }
     });
 
