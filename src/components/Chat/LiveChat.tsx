@@ -46,10 +46,13 @@ const Chat: React.FC<ChatProps> = ({
   const [username, setUsername] = useState<string>("");
   const [isUsernameSet, setIsUsernameSet] = useState<boolean>(false);
   const [activeUsers, setActiveUsers] = useState<number>(0);
+  const [lastEvaluatedKey, setLastEvaluatedKey] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const scrollPositionRef = useRef<number>(0);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -58,11 +61,6 @@ const Chat: React.FC<ChatProps> = ({
       setUser(userInfo);
       fetchUsername(userInfo.sub);
     }
-
-    socket.on("load messages", (data: Message[]) => {
-      setMessages(data);
-      handleLoadMessages(data);
-    });
 
     socket.on("receive message", (data: Message) => {
       const userAtBottom = isUserAtBottom();
@@ -78,16 +76,44 @@ const Chat: React.FC<ChatProps> = ({
     });
 
     socket.on("active users", (data: { activeUsers: number }) => {
-      // setActiveUsers(data.activeUsers);
       onActiveUsersUpdate(data.activeUsers);
     });
 
     return () => {
-      socket.off("load messages");
       socket.off("receive message");
       socket.off("active users");
     };
   }, []);
+
+  useEffect(() => {
+    socket.on("load messages", (data) => {
+      if (lastEvaluatedKey === null) {
+        setMessages(data.messages);
+        setLastEvaluatedKey(data.lastEvaluatedKey);
+        handleLoadMessages(data.messages);
+      } else {
+        const { messages: newMessages, lastEvaluatedKey: newKey } = data;
+        
+        if (chatMessagesRef.current) {
+          const lastMessage = document.getElementById(`message-0`);
+          if (lastMessage) {
+            scrollPositionRef.current = lastMessage.offsetTop;
+          }
+        }
+
+        setMessages((prevMessages) => [...newMessages, ...prevMessages]);
+        setLastEvaluatedKey(newKey);
+        
+        if (chatMessagesRef.current) {
+          chatMessagesRef.current.scrollTop = scrollPositionRef.current - 47;
+        }
+      }
+    });
+
+    return () => {
+      socket.off("load messages");
+    };
+  }, [lastEvaluatedKey]);
 
   const handleLoadMessages = (data: Message[]) => {
     const lastReadTimestamp = localStorage.getItem("lastReadTimestamp")
@@ -185,6 +211,21 @@ const Chat: React.FC<ChatProps> = ({
     }
   };
 
+  const handleScrollToTop = () => {
+    if (chatMessagesRef.current?.scrollTop === 0 && lastEvaluatedKey) {
+      socket.emit("load more messages", lastEvaluatedKey);
+    }
+  };
+
+  useEffect(() => {
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.addEventListener("scroll", handleScrollToTop);
+    }
+    return () => {
+      chatMessagesRef.current?.removeEventListener("scroll", handleScrollToTop);
+    };
+  }, [lastEvaluatedKey]);
+
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -252,6 +293,7 @@ const Chat: React.FC<ChatProps> = ({
                   <div
                     key={msg.timestamp + msg.user}
                     className="message-container text-white"
+                    id={`message-${index}`}
                   >
                     <div className="message-header">
                       <strong>{msg.user}</strong>
@@ -311,9 +353,6 @@ const Chat: React.FC<ChatProps> = ({
               />
             </div>
           )}
-          {/* <div className="active-users text-white">
-            Active users: {activeUsers}
-          </div> */}
         </div>
       </div>
     </div>
