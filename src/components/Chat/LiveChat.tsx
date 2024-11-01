@@ -103,9 +103,16 @@ const Chat: React.FC<ChatProps> = ({
         // After the messages are updated, adjust scroll position
         setTimeout(() => {
           if (chatMessagesRef.current) {
+            // Disable momentum scrolling
+            (chatMessagesRef.current.style as any)['-webkit-overflow-scrolling'] = 'auto';
+            
+            // Calculate the new scroll position
             const newScrollHeight = chatMessagesRef.current.scrollHeight;
             const heightDifference = newScrollHeight - prevScrollHeight;
             chatMessagesRef.current.scrollTop = heightDifference;
+            
+            // Re-enable momentum scrolling
+            (chatMessagesRef.current.style as any)['-webkit-overflow-scrolling'] = 'touch';
           }
         }, 0);
       }
