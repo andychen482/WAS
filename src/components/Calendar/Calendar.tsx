@@ -764,7 +764,7 @@ const Calendar: React.FC<CalendarProps> = ({
               fontSize: "16px", // Set a font size
               borderRadius: "4px", // Round the corners of the button
               border: "none", // Remove the default border
-              backgroundColor: indigo[400], // Use a background color that matches your theme
+              backgroundColor: "#1c63d6", // Use a background color that matches your theme
               color: "#fff", // Set the text color to white
               cursor: "pointer", // Change the cursor to a pointer on hover
               boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Add a subtle box shadow
