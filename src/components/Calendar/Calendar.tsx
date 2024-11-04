@@ -85,13 +85,13 @@ const generateICSContent = (appointments: any[]) => {
 
   // Mapping between the days of the week and the corresponding dates in the target week
   const dayToDateMapping: { [key: number]: string } = {
-    0: "20240825", // Sunday
-    1: "20240826", // Monday
-    2: "20240827", // Tuesday
-    3: "20240828", // Wednesday
-    4: "20240822", // Thursday
-    5: "20240823", // Friday
-    6: "20240824", // Saturday
+    0: "20250112", // Sunday
+    1: "20250113", // Monday
+    2: "20250114", // Tuesday
+    3: "20250115", // Wednesday
+    4: "20250116", // Thursday
+    5: "20250117", // Friday
+    6: "20250118", // Saturday
   };
 
   for (let appointment of appointments) {
